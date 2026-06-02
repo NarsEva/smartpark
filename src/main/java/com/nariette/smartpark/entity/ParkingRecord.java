@@ -2,18 +2,16 @@ package com.nariette.smartpark.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "parking_records")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class ParkingRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
