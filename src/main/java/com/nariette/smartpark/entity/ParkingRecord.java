@@ -2,6 +2,7 @@ package com.nariette.smartpark.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class ParkingRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

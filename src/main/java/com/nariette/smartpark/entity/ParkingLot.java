@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import lombok.Data;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class ParkingLot {
     @Id
     @Column(name = "lot_id", length = 50, nullable = false, unique = true)
