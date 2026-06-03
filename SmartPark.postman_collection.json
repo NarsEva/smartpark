@@ -1,0 +1,194 @@
+{
+  "info": {
+    "_postman_id": "7d8e1f5b-4e5a-4d7f-8e6b-2f16d4a7d501",
+    "name": "SmartPark",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "openai-codex"
+  },
+  "item": [
+    {
+      "name": "Parking Lots",
+      "item": [
+        {
+          "name": "Create Parking Lot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lotId\": \"LOT-001\",\n  \"location\": \"Basement A\",\n  \"capacity\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parking-lots",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "parking-lots"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Parking Lot Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parking-lots/{{lotId}}/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "parking-lots",
+                "{{lotId}}",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Parked Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parking-lots/{{lotId}}/vehicles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "parking-lots",
+                "{{lotId}}",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check In Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Time-Zone",
+                "value": "{{timeZone}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"ABC-123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parking-lots/{{lotId}}/check-in",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "parking-lots",
+                "{{lotId}}",
+                "check-in"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Out Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Time-Zone",
+                "value": "{{timeZone}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"ABC-123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parking-lots/{{lotId}}/check-out",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "parking-lots",
+                "{{lotId}}",
+                "check-out"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "Create Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensePlate\": \"ABC-123\",\n  \"type\": \"CAR\",\n  \"ownerName\": \"Jane Doe\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/vehicles",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "vehicles"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "lotId",
+      "value": "LOT-001"
+    },
+    {
+      "key": "timeZone",
+      "value": "Asia/Manila"
+    }
+  ]
+}
