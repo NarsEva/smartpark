@@ -4,6 +4,7 @@ import com.nariette.smartpark.dto.request.CreateParkingLotRequest;
 import com.nariette.smartpark.dto.response.ParkingLotResponse;
 import com.nariette.smartpark.service.ParkingLotService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class ParkingLotController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParkingLotResponse createParkingLot(@RequestBody CreateParkingLotRequest request) {
+    public ParkingLotResponse createParkingLot(@Valid @RequestBody CreateParkingLotRequest request) {
         return parkingLotService.createParkingLot(request);
     }
 

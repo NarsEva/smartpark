@@ -7,6 +7,7 @@ import com.nariette.smartpark.dto.response.CheckOutResponse;
 import com.nariette.smartpark.dto.response.VehicleResponse;
 import com.nariette.smartpark.service.ParkingService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class ParkingController {
     @ResponseStatus(HttpStatus.CREATED)
     public CheckInResponse checkIn(
             @PathVariable String lotId,
-            @RequestBody CheckInRequest request,
+            @Valid @RequestBody CheckInRequest request,
             @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ) {
         return parkingService.checkIn(lotId, request, timeZone);
@@ -32,7 +33,7 @@ public class ParkingController {
     @PostMapping("/{lotId}/check-out")
     public CheckOutResponse checkOut(
             @PathVariable String lotId,
-            @RequestBody CheckOutRequest request,
+            @Valid @RequestBody CheckOutRequest request,
             @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ) {
         return parkingService.checkOut(lotId, request, timeZone);

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -81,5 +82,20 @@ class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.availableSpaces").value(7));
 
         verify(parkingLotService).getAvailability("LOT-001");
+    }
+
+    @Test
+    void createParkingLot_shouldRejectInvalidLotId() throws Exception {
+        CreateParkingLotRequest request = CreateParkingLotRequest.builder()
+                .lotId("LOT-001-THIS-ID-IS-WAY-TOO-LONG-TO-PASS-THE-FIFTY-CHARACTER-LIMIT")
+                .location("Basement A")
+                .capacity(10)
+                .build();
+
+        mockMvc.perform(post("/api/parking-lots")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsString("lotId: Lot ID must not exceed 50 characters")));
     }
 }

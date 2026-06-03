@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,5 +57,22 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$.ownerName").value("Jane Doe"));
 
         verify(vehicleService).createVehicle(eq(request));
+    }
+
+    @Test
+    void createVehicle_shouldRejectInvalidLicensePlate() throws Exception {
+        CreateVehicleRequest request = CreateVehicleRequest.builder()
+                .licensePlate("ABC 123")
+                .type(VehicleType.CAR)
+                .ownerName("Jane Doe")
+                .build();
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsString(
+                        "licensePlate: License plate may contain only letters, numbers, and dashes"
+                )));
     }
 }

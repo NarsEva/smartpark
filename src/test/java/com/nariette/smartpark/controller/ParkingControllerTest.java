@@ -20,6 +20,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -112,5 +113,20 @@ class ParkingControllerTest {
                 .andExpect(jsonPath("$[0].ownerName").value("John Doe"));
 
         verify(parkingService).getParkedVehicles("LOT-005");
+    }
+
+    @Test
+    void checkIn_shouldRejectInvalidLicensePlate() throws Exception {
+        CheckInRequest request = CheckInRequest.builder()
+                .licensePlate("HIJ 678")
+                .build();
+
+        mockMvc.perform(post("/api/parking-lots/{lotId}/check-in", "LOT-005")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsString(
+                        "licensePlate: License plate may contain only letters, numbers, and dashes"
+                )));
     }
 }
