@@ -9,15 +9,20 @@ import com.nariette.smartpark.entity.ParkingRecord;
 import com.nariette.smartpark.entity.Vehicle;
 import com.nariette.smartpark.exception.BusinessRuleException;
 import com.nariette.smartpark.exception.ResourceNotFoundException;
+import com.nariette.smartpark.dto.response.VehicleResponse;
 import com.nariette.smartpark.mapper.VehicleMapper;
 import com.nariette.smartpark.repository.ParkingLotRepository;
 import com.nariette.smartpark.repository.ParkingRecordRepository;
 import com.nariette.smartpark.repository.VehicleRepository;
-import com.nariette.smartpark.dto.response.VehicleResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -25,12 +30,17 @@ import java.util.List;
 @Transactional
 public class ParkingService {
 
+    private static final DateTimeFormatter DISPLAY_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a XXX");
+
     private final ParkingLotRepository parkingLotRepository;
     private final VehicleRepository vehicleRepository;
     private final ParkingRecordRepository parkingRecordRepository;
     private final VehicleMapper vehicleMapper;
 
-    public CheckInResponse checkIn(String lotId, CheckInRequest request) {
+    public CheckInResponse checkIn(String lotId, CheckInRequest request, String timeZone) {
+        ZoneId zoneId = resolveZoneId(timeZone);
+
         ParkingLot parkingLot = parkingLotRepository.findById(lotId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -57,7 +67,7 @@ public class ParkingService {
         ParkingRecord parkingRecord = ParkingRecord.builder()
                 .parkingLot(parkingLot)
                 .vehicle(vehicle)
-                .checkInTime(LocalDateTime.now())
+                .checkInTime(Instant.now())
                 .active(true)
                 .build();
 
@@ -70,11 +80,13 @@ public class ParkingService {
                 .parkingRecordId(savedRecord.getId())
                 .lotId(parkingLot.getLotId())
                 .licensePlate(vehicle.getLicensePlate())
-                .checkInTime(savedRecord.getCheckInTime())
+                .checkInTime(formatInstant(savedRecord.getCheckInTime(), zoneId))
                 .build();
     }
 
-    public CheckOutResponse checkOut(String lotId, CheckOutRequest request) {
+    public CheckOutResponse checkOut(String lotId, CheckOutRequest request, String timeZone) {
+        ZoneId zoneId = resolveZoneId(timeZone);
+
         ParkingRecord parkingRecord = parkingRecordRepository
                 .findByVehicleLicensePlateAndParkingLotLotIdAndActiveTrue(
                         request.getLicensePlate(),
@@ -89,7 +101,7 @@ public class ParkingService {
 
         ParkingLot parkingLot = parkingRecord.getParkingLot();
 
-        parkingRecord.setCheckOutTime(LocalDateTime.now());
+        parkingRecord.setCheckOutTime(Instant.now());
         parkingRecord.setActive(false);
 
         parkingLot.setOccupiedSpaces(parkingLot.getOccupiedSpaces() - 1);
@@ -101,8 +113,8 @@ public class ParkingService {
                 .parkingRecordId(savedRecord.getId())
                 .lotId(parkingLot.getLotId())
                 .licensePlate(savedRecord.getVehicle().getLicensePlate())
-                .checkInTime(savedRecord.getCheckInTime())
-                .checkOutTime(savedRecord.getCheckOutTime())
+                .checkInTime(formatInstant(savedRecord.getCheckInTime(), zoneId))
+                .checkOutTime(formatInstant(savedRecord.getCheckOutTime(), zoneId))
                 .build();
     }
 
@@ -118,5 +130,23 @@ public class ParkingService {
                 .stream()
                 .map(parkingRecord -> vehicleMapper.toResponse(parkingRecord.getVehicle()))
                 .toList();
+    }
+
+    private ZoneId resolveZoneId(String timeZone) {
+        if (timeZone == null || timeZone.isBlank()) {
+            return ZoneId.systemDefault();
+        }
+
+        try {
+            return ZoneId.of(timeZone);
+        } catch (DateTimeException ex) {
+            throw new BusinessRuleException("Invalid time zone: " + timeZone);
+        }
+    }
+
+    private String formatInstant(Instant instant, ZoneId zoneId) {
+        return instant == null
+                ? null
+                : DISPLAY_TIME_FORMATTER.format(ZonedDateTime.ofInstant(instant, zoneId));
     }
 }

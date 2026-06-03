@@ -9,6 +9,7 @@ import com.nariette.smartpark.service.ParkingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -22,17 +23,19 @@ public class ParkingController {
     @ResponseStatus(HttpStatus.CREATED)
     public CheckInResponse checkIn(
             @PathVariable String lotId,
-            @RequestBody CheckInRequest request
+            @RequestBody CheckInRequest request,
+            @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ) {
-        return parkingService.checkIn(lotId, request);
+        return parkingService.checkIn(lotId, request, timeZone);
     }
 
     @PostMapping("/{lotId}/check-out")
     public CheckOutResponse checkOut(
             @PathVariable String lotId,
-            @RequestBody CheckOutRequest request
+            @RequestBody CheckOutRequest request,
+            @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ) {
-        return parkingService.checkOut(lotId, request);
+        return parkingService.checkOut(lotId, request, timeZone);
     }
 
     @GetMapping("/{lotId}/vehicles")

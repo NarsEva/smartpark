@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,7 +17,7 @@ public class CheckOutResponse {
 
     private String licensePlate;
 
-    private LocalDateTime checkInTime;
+    private String checkInTime;
 
-    private LocalDateTime checkOutTime;
+    private String checkOutTime;
 }

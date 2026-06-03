@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "parking_records")
@@ -28,10 +28,10 @@ public class ParkingRecord {
     private ParkingLot parkingLot;
 
     @Column(name = "check_in_time", nullable = false)
-    private LocalDateTime checkInTime;
+    private Instant checkInTime;
 
     @Column(name = "check_out_time")
-    private LocalDateTime checkOutTime;
+    private Instant checkOutTime;
 
     @Column(nullable = false)
     private Boolean active;
